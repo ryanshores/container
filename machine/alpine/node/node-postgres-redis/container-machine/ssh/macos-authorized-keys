@@ -12,7 +12,9 @@ if [ -r /etc/conf.d/sshd ]; then
 fi
 
 KEY_NAME="${SSH_KEY_NAME:-id_ed25519}"
-KEY_FILE="/Users/${LOGIN_USER}/.ssh/${KEY_NAME}.pub"
+HOST_USER="${SSH_HOST_USER:-$LOGIN_USER}"
+HOST_HOME="${SSH_HOST_HOME:-/Users/${HOST_USER}}"
+KEY_FILE="${HOST_HOME}/.ssh/${KEY_NAME}.pub"
 
 # AuthorizedKeysCommand must print authorized keys to stdout and nothing else.
 if [ -r "$KEY_FILE" ]; then

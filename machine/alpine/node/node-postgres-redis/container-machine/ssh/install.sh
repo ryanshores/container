@@ -30,11 +30,15 @@ install -m 0644 \
     /opt/container-machine/ssh/sshd_config.d/50-apple-container.conf \
     /etc/ssh/sshd_config.d/50-apple-container.conf
 
-# OpenRC sources this file before launching sshd. Preserve a value supplied by
-# the image or machine environment, otherwise use id_ed25519.
+# OpenRC sources this file before launching sshd. Preserve values supplied by
+# the machine environment and default only the public-key filename.
 cat > /etc/conf.d/sshd <<'CONF'
 SSH_KEY_NAME="${SSH_KEY_NAME:-id_ed25519}"
+SSH_HOST_USER="${SSH_HOST_USER:-}"
+SSH_HOST_HOME="${SSH_HOST_HOME:-}"
 export SSH_KEY_NAME
+export SSH_HOST_USER
+export SSH_HOST_HOME
 CONF
 
 rc-update add prepare-apple-container-user default

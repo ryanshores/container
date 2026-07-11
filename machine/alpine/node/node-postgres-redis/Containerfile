@@ -1,7 +1,8 @@
 # Apple Container machine with Node.js, PostgreSQL, Redis, and reusable SSH support.
 FROM alpine:latest
 
-# Filename under /Users/<username>/.ssh, without the .pub suffix.
+# SSH_HOST_USER identifies the macOS account independently of the guest login.
+# SSH_HOST_HOME may instead supply the complete mounted host home directory.
 ENV SSH_KEY_NAME=id_ed25519
 
 RUN apk add --no-cache \

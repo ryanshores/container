@@ -1,0 +1,25 @@
+#!/bin/sh
+set -eu
+
+LOGIN_USER="${1:-}"
+[ -n "$LOGIN_USER" ] || exit 0
+
+# Load the key name used by the OpenRC sshd service. This also makes direct
+# command-line testing behave the same way as an SSH login.
+if [ -r /etc/conf.d/sshd ]; then
+    # shellcheck disable=SC1091
+    . /etc/conf.d/sshd
+fi
+
+KEY_NAME="${SSH_KEY_NAME:-id_ed25519}"
+KEY_FILE="/Users/${LOGIN_USER}/.ssh/${KEY_NAME}.pub"
+
+# AuthorizedKeysCommand must print authorized keys to stdout and nothing else.
+if [ -r "$KEY_FILE" ]; then
+    first_line="$(head -n 1 "$KEY_FILE")"
+    case "$first_line" in
+        ssh-*|ecdsa-*|sk-*) printf '%s\n' "$first_line" ;;
+    esac
+fi
+
+exit 0

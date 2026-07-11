@@ -1,0 +1,10 @@
+#!/sbin/openrc-run
+
+description="Prepare Apple Container users for public-key SSH"
+command="/usr/local/bin/prepare-apple-container-user"
+command_background="no"
+
+depend() {
+    need localmount
+    before sshd
+}

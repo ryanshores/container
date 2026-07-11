@@ -1,0 +1,38 @@
+# Apple Container machine with Node.js, PostgreSQL, Redis, and reusable SSH support.
+FROM alpine:latest
+
+# Filename under /Users/<username>/.ssh, without the .pub suffix.
+ENV SSH_KEY_NAME=id_ed25519
+
+RUN apk add --no-cache \
+    bash \
+    ca-certificates \
+    curl \
+    git \
+    nodejs \
+    npm \
+    openrc \
+    openssh-client \
+    openssh-server \
+    postgresql \
+    postgresql-client \
+    redis \
+    shadow \
+    tzdata && \
+    mkdir -p /workspace && \
+    install -d -o postgres -g postgres /var/lib/postgresql/data && \
+    su postgres -c "initdb -D /var/lib/postgresql/data"
+
+# Reusable Apple Container SSH support. Keep this directory in the build context
+# and use the same two lines in other Alpine-based Containerfiles.
+COPY container-machine/ssh /opt/container-machine/ssh
+RUN /opt/container-machine/ssh/install.sh
+
+RUN rc-update add postgresql default && \
+    rc-update add redis default
+
+EXPOSE 22 5432 6379
+
+WORKDIR /workspace
+
+CMD ["/sbin/init"]
